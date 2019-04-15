@@ -1,15 +1,15 @@
 {
   "compilerOptions": {
-    "module": "es2015",
-    "jsx": "preserve",
+    "module": "commonjs",
     "esModuleInterop": true,
+    "target": "es5",
+    "declaration": true,
+    "noImplicitAny": true,
+    "moduleResolution": "node",
     "sourceMap": true,
-    "allowJs": true,
-    "lib": [
-      "es6",
-      "dom"
-    ],
-    "rootDir": "src",
-    "moduleResolution": "node"
-  }
+    "outDir": "dist",
+    "baseUrl": "."
+  },
+  "include": ["src/*"],
+  "exclude": ["node_modules/*", "tests/*", "examples/*"]
 }

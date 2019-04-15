@@ -1,19 +1,35 @@
 {
   "name": "query-cast",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.html",
+  "version": "1.0.0-alpha.1",
+  "description": "Query params parser and cast micro-library",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:RomiC/query-cast.git"
+  },
+  "license": "MIT",
+  "main": "./dist/index.js",
   "scripts": {
-    "start": "parcel index.html --open",
-    "build": "parcel build index.html"
+    "build": "tsc -p .",
+    "coverage": "codecov --clear --token=29f9bb6e-7e4f-4948-9a5a-8e4d41d7805c",
+    "lint": "tslint -c tslint.json '{src,tests}/*.ts'",
+    "lint:fix": "npm run lint -- --fix",
+    "precommit": "lint-staged",
+    "prepush": "npm test",
+    "start": "ts-node --files -P ./tsconfig.json",
+    "test": "jest"
   },
   "dependencies": {
     "query-string": "6.4.2",
     "typeable": "2.4.1"
   },
   "devDependencies": {
-    "@babel/core": "7.2.0",
-    "parcel-bundler": "^1.6.1"
+    "@types/jest": "^24.0.11",
+    "codecov": "^3.3.0",
+    "jest": "^24.7.1",
+    "lint-staged": "^8.1.5",
+    "ts-jest": "^24.0.2",
+    "tslint": "^5.15.0",
+    "typescript": "^3.4.3"
   },
   "keywords": []
 }

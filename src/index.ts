@@ -1,32 +1,64 @@
-import './styles.css';
-import { combineQueryCast, queryCast, Types } from './query-cast';
+import { cast } from 'typeable';
+import { default as queryString, ParseOptions } from 'query-string';
 
-const cast1 = queryCast({
-  foo: Types.FLOAT,
-  bar: Types.BOOLEAN,
-  baz: Types.STRING
-});
+export enum Types {
+  STRING = 'String',
+  BOOLEAN = 'Boolean',
+  INTEGER = 'Integer',
+  NUMBER = 'Number',
+  FLOAT = 'Float',
+  DATE = 'Date',
+  ANY = 'Any'
+}
 
-const cast2 = queryCast({
-  fooFoo: Types.FLOAT,
-  barBar: Types.BOOLEAN,
-  bazBaz: Types.STRING
-});
+type Parsed<S> = Record<keyof S, any>;
 
-const result1 = cast1('?foo=12.15&bar=false&baz=baaaz');
-const result2 = cast2('?fooFoo=12.15&barBar=false&bazBaz=baaaz');
+type CastSchema = {
+  [key: string]: Types | [Types];
+};
 
-const combinedCast = combineQueryCast({
-  cast1,
-  cast2
-});
+type QueryCast<S extends any> = (query: string) => Parsed<S>;
 
-const combinedResult = combinedCast(
-  '?foo=12.15&bar=false&baz=baaaz&fooFoo=12.15&barBar=false&bazBaz=baaaz'
-);
-// console.log(cast1.bar, cast1.baz);
-console.log(combinedResult);
+type QueryCastsMapObject<S = any> = {
+  [K in keyof S]: QueryCast<S[K]>
+}
 
-document.getElementById('app').innerHTML = `
-<h1>Hello query-caster!</h1>
-`;
+export function queryCast<S extends CastSchema>(
+  schema: S,
+  options?: ParseOptions
+): QueryCast<S> {
+  const schemaKeys = Object.keys(schema);
+
+  return function(query: string): Parsed<S> {
+    const parsed = queryString.parse(query, options);
+
+    return schemaKeys.reduce(
+      (result, key) => {
+        const value = parsed[key];
+        if (value) {
+          result[key] = cast(value, schema[key]);
+        }
+
+        return result;
+      },
+      Object.create(null) as Parsed<S>
+    );
+  };
+}
+
+export function combineQueryCasts<S>(
+  casts: QueryCastsMapObject<S>
+): QueryCast<S> {
+  const castsKeys = Object.keys(casts);
+
+  return function(query: string): Parsed<S> {
+    return castsKeys.reduce(
+      (result, key) => {
+        result[key as keyof S] = casts[key as keyof S](query);
+
+        return result;
+      },
+      Object.create(null) as Parsed<S> 
+    );
+  };
+}
