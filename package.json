@@ -23,13 +23,13 @@
     "typeable": "2.4.1"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.11",
-    "codecov": "^3.3.0",
-    "jest": "^24.7.1",
-    "lint-staged": "^8.1.5",
-    "ts-jest": "^24.0.2",
-    "tslint": "^5.15.0",
-    "typescript": "^3.4.3"
+    "@types/jest": "24.0.11",
+    "codecov": "3.3.0",
+    "jest": "24.7.1",
+    "lint-staged": "8.1.5",
+    "ts-jest": "24.0.2",
+    "tslint": "5.15.0",
+    "typescript": "3.4.3"
   },
   "keywords": []
 }
