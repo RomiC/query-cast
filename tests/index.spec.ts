@@ -19,7 +19,45 @@ test('should parse and cast query string in a simple case', () => {
   });
 });
 
-test('should support combination of query-cast\'s', () => {
+test('should support bracket-type format of arrays', () => {
+  const cast = queryCast({ foo: [Types.NUMBER] }, { arrayFormat: 'bracket' });
+
+  expect(cast('?foo[]=1&foo[]=2&foo[]=3')).toEqual({
+    foo: [1, 2, 3]
+  });
+});
+
+test('should support index-type format of arrays', () => {
+  const cast = queryCast({ foo: [Types.NUMBER] }, { arrayFormat: 'index' });
+
+  expect(cast('?foo[0]=1&foo[1]=2&foo[2]=3')).toEqual({
+    foo: [1, 2, 3]
+  });
+});
+
+test('should support comma-type format of arrays', () => {
+  const cast = queryCast({ foo: [Types.NUMBER] }, { arrayFormat: 'comma' });
+
+  expect(cast('?foo=1,2,3')).toEqual({
+    foo: [1, 2, 3]
+  });
+});
+
+test('should support array based on key duplication', () => {
+  const cast = queryCast({ foo: [Types.NUMBER] }, { arrayFormat: 'none' });
+
+  expect(cast('?foo=1&foo=2&foo=3')).toEqual({
+    foo: [1, 2, 3]
+  });
+
+  const castDefault = queryCast({ foo: [Types.NUMBER] });
+
+  expect(castDefault('?foo=1&foo=2&foo=3')).toEqual({
+    foo: [1, 2, 3]
+  });
+});
+
+test("should support combination of query-cast's", () => {
   const combinedCast = combineQueryCasts({
     cast1,
     cast2
