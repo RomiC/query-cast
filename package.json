@@ -1,6 +1,6 @@
 {
   "name": "query-cast",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0",
   "description": "Query params parser and cast micro-library",
   "repository": {
     "type": "git",
@@ -10,12 +10,11 @@
   "main": "./dist/index.js",
   "scripts": {
     "build": "tsc -p .",
-    "coverage": "codecov --clear --token=29f9bb6e-7e4f-4948-9a5a-8e4d41d7805c",
+    "coverage": "codecov --clear --token=18c0119b-af74-42a1-8b6b-b024452ea266",
     "lint": "tslint -c tslint.json '{src,tests}/*.ts'",
     "lint:fix": "npm run lint -- --fix",
     "precommit": "lint-staged",
     "prepush": "npm test",
-    "start": "ts-node --files -P ./tsconfig.json",
     "test": "jest"
   },
   "dependencies": {
@@ -29,6 +28,7 @@
     "lint-staged": "8.1.5",
     "ts-jest": "24.0.2",
     "tslint": "5.15.0",
+    "tslint-eslint-rules": "^5.4.0",
     "typescript": "3.4.3"
   },
   "keywords": []
