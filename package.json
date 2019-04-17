@@ -17,6 +17,7 @@
     "prepush": "npm test",
     "test": "jest"
   },
+  "types": "./dist/index.d.ts",
   "dependencies": {
     "query-string": "6.4.2",
     "typeable": "2.4.1"

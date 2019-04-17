@@ -1,5 +1,5 @@
-import { cast } from 'typeable';
 import { default as queryString, ParseOptions } from 'query-string';
+import { cast } from 'typeable';
 
 export enum Types {
   STRING = 'String',
@@ -13,15 +13,13 @@ export enum Types {
 
 type Parsed<S> = Record<keyof S, any>;
 
-type CastSchema = {
+interface CastSchema {
   [key: string]: Types | [Types];
-};
+}
 
 type QueryCast<S extends any> = (query: string) => Parsed<S>;
 
-type QueryCastsMapObject<S = any> = {
-  [K in keyof S]: QueryCast<S[K]>
-}
+type QueryCastsMapObject<S = any> = { [K in keyof S]: QueryCast<S[K]> };
 
 export function queryCast<S extends CastSchema>(
   schema: S,
@@ -29,7 +27,7 @@ export function queryCast<S extends CastSchema>(
 ): QueryCast<S> {
   const schemaKeys = Object.keys(schema);
 
-  return function(query: string): Parsed<S> {
+  return (query: string) => {
     const parsed = queryString.parse(query, options);
 
     return schemaKeys.reduce(
@@ -51,14 +49,14 @@ export function combineQueryCasts<S>(
 ): QueryCast<S> {
   const castsKeys = Object.keys(casts);
 
-  return function(query: string): Parsed<S> {
+  return (query: string) => {
     return castsKeys.reduce(
       (result, key) => {
         result[key as keyof S] = casts[key as keyof S](query);
 
         return result;
       },
-      Object.create(null) as Parsed<S> 
+      Object.create(null) as Parsed<S>
     );
   };
 }
