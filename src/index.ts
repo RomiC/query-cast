@@ -1,4 +1,8 @@
-import { default as queryString, ParseOptions } from 'query-string';
+import {
+  default as queryString,
+  ParsedQuery,
+  ParseOptions
+} from 'query-string';
 import { cast } from 'typeable';
 
 export enum Types {
@@ -11,13 +15,15 @@ export enum Types {
   ANY = 'Any'
 }
 
-type Parsed<S> = Record<keyof S, any>;
+type ParsedCastQuery<S> = Record<keyof S, any>;
 
 interface CastSchema {
   [key: string]: Types | [Types];
 }
 
-type QueryCast<S extends any> = (query: string) => Parsed<S>;
+type QueryCast<S extends any> = (
+  query: string | ParsedQuery
+) => ParsedCastQuery<S>;
 
 type QueryCastsMapObject<S = any> = { [K in keyof S]: QueryCast<S[K]> };
 
@@ -27,8 +33,9 @@ export function queryCast<S extends CastSchema>(
 ): QueryCast<S> {
   const schemaKeys = Object.keys(schema);
 
-  return (query: string) => {
-    const parsed = queryString.parse(query, options);
+  return (query: string | ParsedQuery) => {
+    const parsed =
+      typeof query === 'string' ? queryString.parse(query, options) : query;
 
     return schemaKeys.reduce(
       (result, key) => {
@@ -39,7 +46,7 @@ export function queryCast<S extends CastSchema>(
 
         return result;
       },
-      Object.create(null) as Parsed<S>
+      Object.create(null) as ParsedCastQuery<S>
     );
   };
 }
@@ -56,7 +63,7 @@ export function combineQueryCasts<S>(
 
         return result;
       },
-      Object.create(null) as Parsed<S>
+      Object.create(null) as ParsedCastQuery<S>
     );
   };
 }
