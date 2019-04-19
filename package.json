@@ -1,6 +1,6 @@
 {
   "name": "query-cast",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Query params parser and cast micro-library",
   "repository": {
     "type": "git",
