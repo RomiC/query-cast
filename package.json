@@ -15,7 +15,7 @@
     "lint:fix": "npm run lint -- --fix",
     "precommit": "lint-staged",
     "prepush": "npm test",
-    "test": "jest"
+    "test": "jest --no-cache"
   },
   "types": "./dist/index.d.ts",
   "dependencies": {

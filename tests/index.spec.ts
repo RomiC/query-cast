@@ -57,6 +57,20 @@ test('should support array based on key duplication', () => {
   });
 });
 
+test('should support object as param of the cast function', () => {
+  expect(
+    cast1({
+      foo: '12.15',
+      bar: 'false',
+      baz: 'baaaz'
+    })
+  ).toEqual({
+    foo: 12.15,
+    bar: false,
+    baz: 'baaaz'
+  });
+});
+
 test("should support combination of query-cast's", () => {
   const combinedCast = combineQueryCasts({
     cast1,
