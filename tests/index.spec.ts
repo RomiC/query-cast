@@ -57,6 +57,13 @@ test('should support array based on key duplication', () => {
   });
 });
 
+test('should skip params, which were not in query-string', () => {
+  expect(cast1('?foo=12.15&baz=baaaz')).toEqual({
+    foo: 12.15,
+    baz: 'baaaz'
+  });
+});
+
 test('should support object as param of the cast function', () => {
   expect(
     cast1({
