@@ -19,16 +19,16 @@
   },
   "types": "./dist/index.d.ts",
   "dependencies": {
-    "query-string": "6.5.0",
+    "query-string": "6.6.0",
     "typeable": "2.4.1"
   },
   "devDependencies": {
     "@types/jest": "24.0.13",
     "codecov": "3.5.0",
     "jest": "24.8.0",
-    "lint-staged": "8.1.7",
+    "lint-staged": "8.2.0",
     "ts-jest": "24.0.2",
-    "tslint": "5.16.0",
+    "tslint": "5.17.0",
     "tslint-eslint-rules": "5.4.0",
     "typescript": "3.5.1"
   },
