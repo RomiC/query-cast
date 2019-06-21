@@ -15,17 +15,54 @@ export enum Types {
   ANY = 'Any'
 }
 
-type ParsedCastQuery<S> = Record<keyof S, any>;
+type TypesMap = {
+  [Types.ANY]: any;
+  [Types.BOOLEAN]: boolean;
+  [Types.DATE]: Date;
+  [Types.INTEGER]: number;
+  [Types.NUMBER]: number;
+  [Types.FLOAT]: number;
+  [Types.STRING]: string;
+};
 
+type InferType<T> = T extends Types
+  ? TypesMap[T]
+  : T extends Types[]
+  ? Array<TypesMap[T[0]]>
+  : never;
+
+type ParsedCastQuery<S extends CastSchema> = {
+  [K in keyof S]: InferType<S[K]>
+};
+
+/**
+ * Describe the schema of query parsing
+ */
 interface CastSchema {
   [key: string]: Types | [Types];
 }
 
-type QueryCast<S extends any> = (
+/**
+ * Define combination of two or more schemas
+ */
+type CastSchemaMap = {
+  [K: string]: CastSchema;
+};
+
+/**
+ * Cast function for parsing and casting the query
+ */
+type QueryCast<S extends CastSchema> = (
   query: string | ParsedQuery
 ) => ParsedCastQuery<S>;
 
-type QueryCastsMapObject<S = any> = { [K in keyof S]: QueryCast<S[K]> };
+type QueryCastMap<S extends CastSchemaMap> = {
+  [K in keyof S]: QueryCast<S[K]>
+};
+
+type InferQueryCastType<T> = T extends QueryCastMap<infer S>
+  ? { [K in keyof S]: ParsedCastQuery<S[K]> }
+  : never;
 
 export function queryCast<S extends CastSchema>(
   schema: S,
@@ -41,7 +78,7 @@ export function queryCast<S extends CastSchema>(
       (result, key) => {
         const value = parsed[key];
         if (value) {
-          result[key] = cast(value, schema[key]);
+          result[key as keyof S] = cast(value, schema[key]);
         }
 
         return result;
@@ -51,19 +88,21 @@ export function queryCast<S extends CastSchema>(
   };
 }
 
-export function combineQueryCasts<S>(
-  casts: QueryCastsMapObject<S>
-): QueryCast<S> {
+export function combineQueryCasts<T extends QueryCastMap<any>>(
+  casts: T
+): (query: string) => InferQueryCastType<T> {
   const castsKeys = Object.keys(casts);
 
   return (query: string) => {
     return castsKeys.reduce(
       (result, key) => {
-        result[key as keyof S] = casts[key as keyof S](query);
+        result[key as keyof T] = casts[key as keyof T](
+          query
+        ) as InferQueryCastType<T>[keyof T];
 
         return result;
       },
-      Object.create(null) as ParsedCastQuery<S>
+      Object.create(null) as InferQueryCastType<T>
     );
   };
 }
