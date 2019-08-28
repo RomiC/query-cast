@@ -23,12 +23,12 @@
     "typeable": "2.4.1"
   },
   "devDependencies": {
-    "@types/jest": "24.0.17",
+    "@types/jest": "24.0.18",
     "codecov": "3.5.0",
-    "jest": "24.8.0",
+    "jest": "24.9.0",
     "lint-staged": "9.2.5",
     "ts-jest": "24.0.2",
-    "tslint": "5.18.0",
+    "tslint": "5.19.0",
     "tslint-eslint-rules": "5.4.0",
     "typescript": "3.5.3"
   },
