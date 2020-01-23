@@ -23,7 +23,7 @@
     "typeable": "2.4.1"
   },
   "devDependencies": {
-    "@types/jest": "24.9.0",
+    "@types/jest": "24.9.1",
     "codecov": "3.6.1",
     "jest": "24.9.0",
     "lint-staged": "9.5.0",
