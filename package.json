@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@types/jest": "25.2.3",
-    "codecov": "3.7.1",
+    "codecov": "3.7.2",
     "jest": "25.5.4",
     "lint-staged": "10.2.11",
     "ts-jest": "25.5.1",
