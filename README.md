@@ -42,13 +42,13 @@ You may think of it as a reducers from [`redux`](https://github.com/reduxjs/redu
 
 ## API
 
-`query-cast` is a combination of two great libraries: [`query-string`](https://github.com/sindresorhus/query-string) and [`typeable.js`](https://github.com/xpepermint/typeablejs). So, it supports params and options of both.
+`query-cast` is  based on [`typeable.js`](https://github.com/xpepermint/typeablejs). So, schema definition is the same as for typeable library.
 
-### `queryCast(schema[, parserOptions])`
+### `queryCast(schema)`
 
 Create cast function based upon schema.
 
-- `schema: {[key: string]: Types | [Types]}` – describe the shape of the ouput. You should use the types from `Types`-enum from the lib while defining it. List of supported types below:
+- `schema: {[key: string]: Types | [Types]}` – describe the shape of the output. You should use the types from `Types`-enum from the lib while defining it. List of supported types below:
 
   - `Types.STRING` – string value will left as is
   - `Types.BOOLEAN` – convert to boolean. Any number which is greater than 0, `Infinity`, `'1'`, `'yes'`, `'+'` will be cast to `true`.
@@ -57,21 +57,6 @@ Create cast function based upon schema.
   - `Types.NUMBER` – alias of `Types.FLOAT`
   - `Types.DATE` – convert to `Date`-object
   - `Types.ANY` – the same as `Types.STRING`
-
-- `parserOptions` – additional parser options, which would pass to [`query-string.parse`](https://github.com/sindresorhus/query-string#parsestring-options)-method:
-
-  - `decode: boolean = true` - Decode the keys and values. URL components are decoded with [`decode-uri-component`](https://github.com/SamVerschueren/decode-uri-component).
-
-  - `arrayFormat: string = 'none'` - One of the following:
-
-
-    * `'bracket'` - Parse arrays with bracket representation: `foo[]=1&foo[]=2&foo[]=3`
-
-    * `'index'` - Parse arrays with index representation: `foo[0]=1&foo[1]=2&foo[3]=3`
-
-    * `'comma'` - Parse arrays with elements separated by comma: `foo=1,2,3`
-
-    * `'none'` - Parse arrays with elements using duplicate keys: `foo=1&foo=2&foo=3`
 
 ### `combineQueryCasts(casts)`
 
