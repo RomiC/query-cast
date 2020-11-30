@@ -52,7 +52,7 @@ Create cast function based upon schema.
 
   - `Types.STRING` – string value will left as is
   - `Types.BOOLEAN` – convert to boolean. Any number which is greater than 0, `Infinity`, `'1'`, `'yes'`, `'+'` will be cast to `true`.
-  - `Types.INTEGER` – convert to interger
+  - `Types.INTEGER` – convert to integer
   - `Types.FLOAT` – convert to float
   - `Types.NUMBER` – alias of `Types.FLOAT`
   - `Types.DATE` – convert to `Date`-object

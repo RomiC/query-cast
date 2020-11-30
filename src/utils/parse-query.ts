@@ -18,18 +18,19 @@ const CHAR_SMALL_END = 122;
 const DIG_START = 48;
 const DIG_END = 57;
 
-const CHAR_TYPE = 1;
-const DIGIT_TYPE = 2;
-const UNRESERVED_TYPE = 3;
+const CHARACTER = 1;
+const DIGIT = 2;
+const UNRESERVED = 3;
+const RESERVED = 4;
 
 type Categories = {
-  [key: number]: typeof CHAR_TYPE | typeof DIGIT_TYPE;
+  [key: number]: typeof CHARACTER | typeof DIGIT;
 };
 
 const CATEGORIES: Uint32Array = new Uint32Array(128);
 
 for (let i = 0; i <= 126; i++) {
-  CATEGORIES[i] = (isChar(i) && CHAR_TYPE) || (isDigit(i) && DIGIT_TYPE) || (isUnreserved(i) && UNRESERVED_TYPE);
+  CATEGORIES[i] = (isChar(i) && CHARACTER) || (isDigit(i) && DIGIT) || (isUnreserved(i) && UNRESERVED) || RESERVED;
 }
 
 function charCodeInRange(code: number, min: number, max: number): boolean {
@@ -63,112 +64,162 @@ type QueryParams = {
   [key: string]: string | string[] | QueryParams;
 };
 
-function appendParamValue(root: QueryParams, name: string, index: string, value: string): void {
+function appendParamValue(root: QueryParams, name: string, value: string, index: number = -1): void {
   if (!name) {
     return;
   }
 
-  const nameToAppend = decodeURIComponent(name);
-  const valueToAppend = decodeURIComponent(value);
-  const indexToAppend = parseInt(index, 10);
+  const currentValue = root[name];
 
-  if (root[nameToAppend] != null) {
-    if (!Array.isArray(root[nameToAppend])) {
-      root[nameToAppend] = [root[nameToAppend] as string];
+  if (currentValue != null || index >= 0) {
+    if (!Array.isArray(currentValue)) {
+      const arr: string[] = [];
+
+      if (currentValue != null) {
+        arr.push(root[name] as string);
+      }
+
+      root[name] = arr;
     }
 
-    // (root[nameToAppend] as string[])[+index] = valueToAppend;
-
-    if (isNaN(indexToAppend)) {
-      (root[nameToAppend] as string[]).push(valueToAppend);
+    if (index <= 0) {
+      (root[name] as string[]).push(value);
     } else {
-      (root[nameToAppend] as string[])[indexToAppend] = valueToAppend;
+      (root[name] as string[])[index] = value;
     }
   } else {
-    root[nameToAppend] = valueToAppend;
+    root[name] = value;
   }
 }
 
-function parseQuery(query: string): { [key: string]: any } {
-  const root: QueryParams = {};
-  let currentVar = root;
-  let currentVarName = '';
-  let currentVarIndex = '';
-  let currentVal = '';
+class Scanner {
+  public char: string = null;
+  public code: number = -1;
+  /**
+   * Index varies from -1 to _input.length
+   */
+  private _index: number = -1;
 
-  let mode: MODE = 'init';
+  constructor(private _input: string) {}
 
-  for (
-    let i = 0, char: string = query[0], charCode: number = query.charCodeAt(0);
-    i <= query.length + 1;
-    char = query[++i], charCode = query.charCodeAt(i)
-  ) {
-    if (isNaN(charCode) || charCode === HASH_SIGN) {
-      appendParamValue(currentVar, currentVarName, currentVarIndex, currentVal);
+  next(): number | symbol {
+    if (this._index >= this._input.length) {
+      return Scanner.EOL;
+    }
+
+    ++this._index;
+
+    if (this._index === this._input.length) {
+      this.char = null;
+      this.code = -1;
+      return Scanner.EOL;
+    }
+
+    this.char = this._input[this._index];
+    this.code = this._input.charCodeAt(this._index);
+
+    return this._index;
+  }
+
+  static EOL: symbol = Symbol('SCANNING_COMPLETE');
+}
+
+function scanName(root: QueryParams, scanner: Scanner): { name: string; root: QueryParams } {
+  let name = '';
+  let decodeRequire = false;
+
+  cycle: do {
+    switch (scanner.code) {
+      case DOT_SIGN:
+        const paramName = decodeURIComponent(name);
+        root = root[paramName] = root[paramName] || Object.create(null);
+        name = '';
+        break;
+
+      case HASH_SIGN:
+      case EQUAL_SIGN:
+      case OPEN_SQUARE_BRACKET_SIGN:
+      case AMPERSAND_SIGN:
+        break cycle;
+
+      case QUESTION_SIGN:
+        continue;
+
+      case PERCENT_SIGN:
+        decodeRequire = true;
+
+      default:
+        name += scanner.char;
+    }
+  } while (scanner.next() !== Scanner.EOL);
+
+  return { name: decodeRequire ? decodeURIComponent(name) : name, root };
+}
+
+function scanIndex(scanner: Scanner): number {
+  let index = '';
+
+  if (scanner.code !== OPEN_SQUARE_BRACKET_SIGN) {
+    return -1;
+  }
+
+  do {
+    // @ts-ignore
+    if (scanner.code === CLOSE_SQUARE_BRACKET_SIGN) {
       break;
     }
 
-    switch (mode) {
-      case 'init':
-        if (charCode === QUESTION_SIGN) {
-          continue;
-        } else if (isDigit(charCode) || isChar(charCode)) {
-          mode = 'name';
-        }
-
-      case 'name':
-        if (
-          isDigit(charCode) ||
-          isChar(charCode) ||
-          charCode === DASH_SIGN ||
-          charCode === TILDE_SIGN ||
-          charCode === UNDERSCORE_SIGN ||
-          charCode === PERCENT_SIGN
-        ) {
-          currentVarName += char;
-        } else if (charCode === DOT_SIGN) {
-          if (typeof currentVar[currentVarName] !== 'object') {
-            currentVar[currentVarName] = {};
-          }
-          currentVar = currentVar[currentVarName] as QueryParams;
-          currentVarName = '';
-        } else if (charCode === OPEN_SQUARE_BRACKET_SIGN) {
-          if (typeof currentVar[currentVarName] !== 'object') {
-            currentVar[currentVarName] = [];
-          }
-          mode = 'index';
-        } else if (charCode === EQUAL_SIGN) {
-          mode = 'value';
-        } else if (charCode === AMPERSAND_SIGN) {
-          currentVar[currentVarName] = '';
-          currentVarIndex = '';
-          currentVarName = '';
-          currentVar = root;
-        }
-        continue;
-
-      case 'index':
-        if (charCode === EQUAL_SIGN) {
-          mode = 'value';
-        } else if (charCode !== CLOSE_SQUARE_BRACKET_SIGN) {
-          currentVarIndex += char;
-        }
-        continue;
-
-      case 'value':
-        if (charCode !== AMPERSAND_SIGN) {
-          currentVal += char;
-          continue;
-        } else if (charCode === AMPERSAND_SIGN) {
-          appendParamValue(currentVar, currentVarName, currentVarIndex, currentVal);
-          currentVar = root;
-          currentVarName = currentVarIndex = currentVal = '';
-          mode = 'name';
-          continue;
-        }
+    // @ts-ignore
+    if (scanner.code === HASH_SIGN) {
+      break;
     }
-  }
 
+    if (CATEGORIES[scanner.code] === DIGIT) {
+      index += scanner.char;
+    }
+  } while (scanner.next() !== Scanner.EOL);
+
+  return parseInt(index, 10) || 0;
+}
+
+function scanValue(scanner: Scanner): string {
+  let value = '';
+  let decodeRequire = false;
+
+  do {
+    if (scanner.code === AMPERSAND_SIGN) {
+      break;
+    }
+
+    if (scanner.code === HASH_SIGN) {
+      break;
+    }
+
+    if (scanner.code === PERCENT_SIGN) {
+      decodeRequire = true;
+    }
+
+    const category = CATEGORIES[scanner.code];
+    if (category != null && category !== RESERVED) {
+      value += scanner.char;
+    }
+  } while (scanner.next() !== Scanner.EOL);
+
+  return decodeRequire ? decodeURIComponent(value) : value;
+}
+
+function parseQuery(query: string): QueryParams {
+  const root: QueryParams = Object.create(null);
+
+  const scanner = new Scanner(query);
+
+  while (scanner.code !== HASH_SIGN && scanner.next() !== Scanner.EOL) {
+    const { name, root: currentRoot } = scanName(root, scanner);
+    const index = scanIndex(scanner);
+    const value = scanValue(scanner);
+
+    appendParamValue(currentRoot, name, value, index);
+  }
   return root;
 }
 
