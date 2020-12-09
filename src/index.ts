@@ -1,4 +1,3 @@
-import { default as queryString, ParsedQuery, ParseOptions } from 'query-string';
 import parseQuery from './utils/parse-query';
 import { cast } from 'typeable';
 
@@ -45,6 +44,13 @@ interface CastSchema {
 type CastSchemaMap = {
   [K: string]: CastSchema;
 };
+
+/**
+ * Result of parsing
+ */
+interface ParsedQuery<T = string> {
+  [key: string]: T | T[] | null;
+}
 
 /**
  * Cast function for parsing and casting the query

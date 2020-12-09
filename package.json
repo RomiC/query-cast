@@ -16,7 +16,6 @@
   },
   "types": "./dist/index.d.ts",
   "dependencies": {
-    "query-string": "6.11.1",
     "typeable": "2.4.1"
   },
   "devDependencies": {
