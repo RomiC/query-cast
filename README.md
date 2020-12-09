@@ -1,4 +1,4 @@
-# query-cast [![Build Status](https://travis-ci.com/RomiC/query-cast.svg?branch=master)](https://travis-ci.org/RomiC/query-cast) [![codecov](https://codecov.io/gh/RomiC/query-cast/branch/master/graph/badge.svg)](https://codecov.io/gh/RomiC/query-cast) [![Renovatebot badge](https://badges.renovateapi.com/github/RomiC/query-cast)](https://renovatebot.com/)
+# query-cast ![Tests](https://github.com/RomiC/query-cast/workflows/Tests/badge.svg) [![Coverage Status](https://coveralls.io/repos/github/RomiC/query-cast/badge.svg)](https://coveralls.io/github/RomiC/query-cast) [![Renovatebot badge](https://badges.renovateapi.com/github/RomiC/query-cast)](https://renovatebot.com/)
 
 Is a small utility which helps you parse and cast the query (or search) params of the url:
 

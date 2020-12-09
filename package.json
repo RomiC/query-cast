@@ -10,7 +10,6 @@
   "main": "./dist/index.js",
   "scripts": {
     "build": "tsc -p .",
-    "coverage": "codecov --clear --token=18c0119b-af74-42a1-8b6b-b024452ea266",
     "lint": "tslint -c tslint.json '{src,tests}/*.ts'",
     "lint:fix": "npm run lint -- --fix",
     "test": "jest --no-cache"
@@ -22,7 +21,6 @@
   },
   "devDependencies": {
     "@types/jest": "26.0.16",
-    "codecov": "3.8.0",
     "husky": "4.3.5",
     "jest": "25.5.4",
     "lint-staged": "10.5.3",
