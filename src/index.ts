@@ -28,11 +28,11 @@ type TypesMap = {
 type InferType<T> = T extends Types
   ? TypesMap[T]
   : T extends Types[]
-  ? Array<TypesMap[T[0]]>
+  ? TypesMap[T[0]][]
   : never;
 
 type ParsedCastQuery<S extends CastSchema> = {
-  [K in keyof S]: InferType<S[K]>
+  [K in keyof S]: InferType<S[K]>;
 };
 
 /**
@@ -57,7 +57,7 @@ type QueryCast<S extends CastSchema> = (
 ) => ParsedCastQuery<S>;
 
 type QueryCastMap<S extends CastSchemaMap> = {
-  [K in keyof S]: QueryCast<S[K]>
+  [K in keyof S]: QueryCast<S[K]>;
 };
 
 type InferQueryCastType<T> = T extends QueryCastMap<infer S>
@@ -74,17 +74,14 @@ export function queryCast<S extends CastSchema>(
     const parsed =
       typeof query === 'string' ? queryString.parse(query, options) : query;
 
-    return schemaKeys.reduce(
-      (result, key) => {
-        const value = parsed[key];
-        if (value) {
-          result[key as keyof S] = cast(value, schema[key]);
-        }
+    return schemaKeys.reduce((result, key) => {
+      const value = parsed[key];
+      if (value) {
+        result[key as keyof S] = cast(value, schema[key]);
+      }
 
-        return result;
-      },
-      Object.create(null) as ParsedCastQuery<S>
-    );
+      return result;
+    }, Object.create(null) as ParsedCastQuery<S>);
   };
 }
 
@@ -94,15 +91,12 @@ export function combineQueryCasts<T extends QueryCastMap<any>>(
   const castsKeys = Object.keys(casts);
 
   return (query: string) => {
-    return castsKeys.reduce(
-      (result, key) => {
-        result[key as keyof T] = casts[key as keyof T](
-          query
-        ) as InferQueryCastType<T>[keyof T];
+    return castsKeys.reduce((result, key) => {
+      result[key as keyof T] = casts[key as keyof T](
+        query
+      ) as InferQueryCastType<T>[keyof T];
 
-        return result;
-      },
-      Object.create(null) as InferQueryCastType<T>
-    );
+      return result;
+    }, Object.create(null) as InferQueryCastType<T>);
   };
 }
