@@ -1,8 +1,4 @@
-import {
-  default as queryString,
-  ParsedQuery,
-  ParseOptions
-} from 'query-string';
+import parseQuery from './utils/parse-query';
 import { cast } from 'typeable';
 
 export enum Types {
@@ -50,29 +46,28 @@ type CastSchemaMap = {
 };
 
 /**
+ * Result of parsing
+ */
+interface ParsedQuery<T = string> {
+  [key: string]: T | T[] | null;
+}
+
+/**
  * Cast function for parsing and casting the query
  */
-type QueryCast<S extends CastSchema> = (
-  query: string | ParsedQuery
-) => ParsedCastQuery<S>;
+type QueryCast<S extends CastSchema> = (query: string | ParsedQuery) => ParsedCastQuery<S>;
 
 type QueryCastMap<S extends CastSchemaMap> = {
   [K in keyof S]: QueryCast<S[K]>;
 };
 
-type InferQueryCastType<T> = T extends QueryCastMap<infer S>
-  ? { [K in keyof S]: ParsedCastQuery<S[K]> }
-  : never;
+type InferQueryCastType<T> = T extends QueryCastMap<infer S> ? { [K in keyof S]: ParsedCastQuery<S[K]> } : never;
 
-export function queryCast<S extends CastSchema>(
-  schema: S,
-  options?: ParseOptions
-): QueryCast<S> {
+export function queryCast<S extends CastSchema>(schema: S): QueryCast<S> {
   const schemaKeys = Object.keys(schema);
 
   return (query: string | ParsedQuery) => {
-    const parsed =
-      typeof query === 'string' ? queryString.parse(query, options) : query;
+    const parsed = typeof query === 'string' ? parseQuery(query) : query;
 
     return schemaKeys.reduce((result, key) => {
       const value = parsed[key];
@@ -85,16 +80,12 @@ export function queryCast<S extends CastSchema>(
   };
 }
 
-export function combineQueryCasts<T extends QueryCastMap<any>>(
-  casts: T
-): (query: string) => InferQueryCastType<T> {
+export function combineQueryCasts<T extends QueryCastMap<any>>(casts: T): (query: string) => InferQueryCastType<T> {
   const castsKeys = Object.keys(casts);
 
   return (query: string) => {
     return castsKeys.reduce((result, key) => {
-      result[key as keyof T] = casts[key as keyof T](
-        query
-      ) as InferQueryCastType<T>[keyof T];
+      result[key as keyof T] = casts[key as keyof T](query) as InferQueryCastType<T>[keyof T];
 
       return result;
     }, Object.create(null) as InferQueryCastType<T>);

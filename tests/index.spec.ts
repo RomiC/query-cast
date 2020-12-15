@@ -20,7 +20,7 @@ test('should parse and cast query string in a simple case', () => {
 });
 
 test('should support bracket-type format of arrays', () => {
-  const cast = queryCast({ foo: [Types.NUMBER] }, { arrayFormat: 'bracket' });
+  const cast = queryCast({ foo: [Types.NUMBER] });
 
   expect(cast('?foo[]=1&foo[]=2&foo[]=3')).toEqual({
     foo: [1, 2, 3]
@@ -28,23 +28,15 @@ test('should support bracket-type format of arrays', () => {
 });
 
 test('should support index-type format of arrays', () => {
-  const cast = queryCast({ foo: [Types.NUMBER] }, { arrayFormat: 'index' });
+  const cast = queryCast({ foo: [Types.NUMBER] });
 
   expect(cast('?foo[0]=1&foo[1]=2&foo[2]=3')).toEqual({
     foo: [1, 2, 3]
   });
 });
 
-test('should support comma-type format of arrays', () => {
-  const cast = queryCast({ foo: [Types.NUMBER] }, { arrayFormat: 'comma' });
-
-  expect(cast('?foo=1,2,3')).toEqual({
-    foo: [1, 2, 3]
-  });
-});
-
 test('should support array based on key duplication', () => {
-  const cast = queryCast({ foo: [Types.NUMBER] }, { arrayFormat: 'none' });
+  const cast = queryCast({ foo: [Types.NUMBER] });
 
   expect(cast('?foo=1&foo=2&foo=3')).toEqual({
     foo: [1, 2, 3]
@@ -84,11 +76,7 @@ test("should support combination of query-cast's", () => {
     cast2
   });
 
-  expect(
-    combinedCast(
-      '?foo=12.15&bar=false&baz=baaaz&fooFoo=98.76&barBar=true&bazBaz=zaaab'
-    )
-  ).toEqual({
+  expect(combinedCast('?foo=12.15&bar=false&baz=baaaz&fooFoo=98.76&barBar=true&bazBaz=zaaab')).toEqual({
     cast1: {
       foo: 12.15,
       bar: false,
