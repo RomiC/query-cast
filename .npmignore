@@ -11,3 +11,4 @@ src
 tests
 tsconfig.json
 tslint.json
+.github
