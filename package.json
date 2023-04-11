@@ -6,6 +6,9 @@
     "type": "git",
     "url": "git@github.com:RomiC/query-cast.git"
   },
+  "engines": {
+    "node": ">=14"
+  },
   "license": "MIT",
   "main": "./dist/index.js",
   "scripts": {
