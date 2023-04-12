@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest';
 import parseQuery from '../../src/utils/parse-query';
 
 test('handles simple cases', () => {
