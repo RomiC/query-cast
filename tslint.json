@@ -2,6 +2,7 @@
   "defaultSeverity": "error",
   "extends": ["tslint:recommended"],
   "rules": {
+    "array-type": false,
     "comment-format": {
       "options": ["check-space"],
       "severity": "warning"
