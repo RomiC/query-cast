@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest';
 import { combineQueryCasts, queryCast, Types } from '../src/index';
 
 const cast1 = queryCast({
