@@ -22,7 +22,7 @@
     "typeable": "2.4.1"
   },
   "devDependencies": {
-    "@vitest/coverage-c8": "0.31.4",
+    "@vitest/coverage-c8": "0.32.0",
     "husky": "8.0.3",
     "lint-staged": "13.2.2",
     "tslint": "5.20.1",
