@@ -71,7 +71,7 @@ test('should support object as param of the cast function', () => {
   });
 });
 
-test("should support combination of query-cast's", () => {
+test('should support combination of query-cast\'s', () => {
   const combinedCast = combineQueryCasts({
     cast1,
     cast2

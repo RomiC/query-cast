@@ -12,6 +12,7 @@ export enum Types {
 }
 
 type TypesMap = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [Types.ANY]: any;
   [Types.BOOLEAN]: boolean;
   [Types.DATE]: Date;
@@ -21,11 +22,7 @@ type TypesMap = {
   [Types.STRING]: string;
 };
 
-type InferType<T> = T extends Types
-  ? TypesMap[T]
-  : T extends Types[]
-  ? TypesMap[T[0]][]
-  : never;
+type InferType<T> = T extends Types ? TypesMap[T] : T extends Types[] ? TypesMap[T[0]][] : never;
 
 type ParsedCastQuery<S extends CastSchema> = {
   [K in keyof S]: InferType<S[K]>;
@@ -80,6 +77,7 @@ export function queryCast<S extends CastSchema>(schema: S): QueryCast<S> {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function combineQueryCasts<T extends QueryCastMap<any>>(casts: T): (query: string) => InferQueryCastType<T> {
   const castsKeys = Object.keys(casts);
 
