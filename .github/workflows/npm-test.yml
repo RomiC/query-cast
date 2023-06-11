@@ -12,21 +12,27 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: ["14", "16", "18"]
+        node: ["16", "18", "20"]
     name: Test with node v${{ matrix.node }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-      - run: npm ci
-      - run: npm run lint
-      - run: npm test
-      - uses: coverallsapp/github-action@master
+      - name: Installing dependencies
+        run: npm ci
+      - name: Linting
+        run: npm run lint
+      - name: Testing
+        run: npm test
+      - name: Calculating coverage
+        uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.github_token }}
           flag-name: node v${{ matrix.node }}
           parallel: true
+      - name: Creating a test build
+        run: npm run build
 
   finish:
     needs: test

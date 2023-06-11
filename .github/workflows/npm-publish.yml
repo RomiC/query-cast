@@ -5,31 +5,36 @@ on:
     types: [created]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: ["14", "16", "18"]
+        node: ["16", "18", "20"]
     name: Test with node ${{ matrix.node }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-      - run: npm ci
-      - run: npm test
+      - name: Installing dependencies
+        run: npm ci
+      - name: Linting
+        run: npm run lint
+      - name: Testing
+        run: npm test
 
-  publish-npm:
-    needs: build
+  publish:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
           registry-url: https://registry.npmjs.org/
-      - run: npm ci
-      - run: npm run build
-      - run: npm publish
+      - name: Creating the production build
+        run: npm run build
+      - name: Publishing
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
