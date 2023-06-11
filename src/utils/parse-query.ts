@@ -23,10 +23,6 @@ const DIGIT = 2;
 const UNRESERVED = 3;
 const RESERVED = 4;
 
-type Categories = {
-  [key: number]: typeof CHARACTER | typeof DIGIT;
-};
-
 const CATEGORIES: Uint32Array = new Uint32Array(128);
 
 for (let i = 0; i <= 126; i++) {
@@ -58,13 +54,11 @@ function isUnreserved(charCode: number): boolean {
   );
 }
 
-type MODE = 'init' | 'name' | 'index' | 'value' | 'hash';
-
 type QueryParams = {
   [key: string]: string | string[] | QueryParams;
 };
 
-function appendParamValue(root: QueryParams, name: string, value: string, index: number = -1): void {
+function appendParamValue(root: QueryParams, name: string, value: string, index = -1): void {
   if (!name) {
     return;
   }
@@ -94,34 +88,34 @@ function appendParamValue(root: QueryParams, name: string, value: string, index:
 
 class Scanner {
   public char: string = null;
-  public code: number = -1;
+  public code = -1;
   /**
    * Index varies from -1 to _input.length
    */
-  private _index: number = -1;
+  private index = -1;
 
-  constructor(private _input: string) {}
+  constructor(private input: string) {}
 
   next(): number | symbol {
-    if (this._index >= this._input.length) {
+    if (this.index >= this.input.length) {
       return Scanner.EOL;
     }
 
-    ++this._index;
+    ++this.index;
 
-    if (this._index === this._input.length) {
+    if (this.index === this.input.length) {
       this.char = null;
       this.code = -1;
       return Scanner.EOL;
     }
 
-    this.char = this._input[this._index];
-    this.code = this._input.charCodeAt(this._index);
+    this.char = this.input[this.index];
+    this.code = this.input.charCodeAt(this.index);
 
-    return this._index;
+    return this.index;
   }
 
-  static EOL: symbol = Symbol('SCANNING_COMPLETE');
+  static EOL = Symbol('SCANNING_COMPLETE');
 }
 
 function scanName(root: QueryParams, scanner: Scanner): { name: string; root: QueryParams } {
@@ -129,9 +123,11 @@ function scanName(root: QueryParams, scanner: Scanner): { name: string; root: Qu
   let decodeRequire = false;
 
   cycle: do {
+    let paramName: string;
+
     switch (scanner.code) {
       case DOT_SIGN:
-        const paramName = decodeURIComponent(name);
+        paramName = decodeURIComponent(name);
         root = root[paramName] = root[paramName] || Object.create(null);
         name = '';
         break;
@@ -164,11 +160,13 @@ function scanIndex(scanner: Scanner): number {
   }
 
   do {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     if (scanner.code === CLOSE_SQUARE_BRACKET_SIGN) {
       break;
     }
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     if (scanner.code === HASH_SIGN) {
       break;
