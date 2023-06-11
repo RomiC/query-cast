@@ -1,14 +1,11 @@
-.nyc_output
-.travis.yml
 .vscode
 *.tgz
 coverage
-jest.config.js
 node_modules
 .prettierrc
-renovate.json
 src
-tests
+specs
 tsconfig.json
-tslint.json
 .github
+vitest.config.ts
+.eslintrc
