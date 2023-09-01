@@ -35,7 +35,7 @@
     "lint-staged": "13.2.3",
     "prettier": "^3.0.3",
     "typescript": "5.2.2",
-    "vitest": "0.32.2"
+    "vitest": "0.34.3"
   },
   "keywords": [
     "query",
