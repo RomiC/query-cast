@@ -1,5 +1,7 @@
 import { cast } from 'typeable';
-import parseQuery from './utils/parse-query';
+import { parseQuery } from './utils/parse-query';
+
+export { parseQuery };
 
 export enum Types {
   STRING = 'String',

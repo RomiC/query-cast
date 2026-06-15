@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
-    "module": "node16",
+    "module": "esnext",
     "esModuleInterop": true,
-    "target": "es2015",
+    "target": "es2023",
     "declaration": true,
     "noImplicitAny": true,
-    "moduleResolution": "node16",
+    "moduleResolution": "bundler",
     "sourceMap": true,
-    "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "src/",
+    "outDir": "dist/"
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules/*"]
