@@ -86,3 +86,4 @@ typings/
 dist
 coverage
 .vscode
+.pi
