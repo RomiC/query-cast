@@ -7,9 +7,15 @@
     "url": "git@github.com:RomiC/query-cast.git"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=22"
   },
   "license": "MIT",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "main": "./dist/index.js",
   "scripts": {
     "build": "tsc -p .",
