@@ -206,7 +206,7 @@ function scanValue(scanner: Scanner): string {
   return decodeRequire ? decodeURIComponent(value) : value;
 }
 
-function parseQuery(query: string): QueryParams {
+export function parseQuery(query: string): QueryParams {
   const root: QueryParams = Object.create(null);
 
   const scanner = new Scanner(query);
@@ -220,5 +220,3 @@ function parseQuery(query: string): QueryParams {
   }
   return root;
 }
-
-export default parseQuery;
