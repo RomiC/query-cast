@@ -1,8 +1,6 @@
 import { cast } from 'typeable';
 import { parseQuery } from './utils/parse-query';
 
-export { parseQuery };
-
 export enum Types {
   STRING = 'String',
   BOOLEAN = 'Boolean',
@@ -70,7 +68,7 @@ export function queryCast<S extends CastSchema>(schema: S): QueryCast<S> {
 
     return schemaKeys.reduce((result, key) => {
       const value = parsed[key];
-      if (value) {
+      if (value != null) {
         result[key as keyof S] = cast(value, schema[key]);
       }
 

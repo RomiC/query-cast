@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 
 import * as queryCast from 'query-cast';
 
-const expectedExports = ['Types', 'combineQueryCasts', 'parseQuery', 'queryCast'].sort();
+const expectedExports = ['Types', 'combineQueryCasts', 'queryCast'].sort();
 
 assert.deepStrictEqual(Object.keys(queryCast).sort(), expectedExports);
 
