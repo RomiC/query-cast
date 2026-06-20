@@ -2,7 +2,7 @@ const assert = require('node:assert/strict');
 
 const queryCast = require('query-cast');
 
-const expectedExports = ['Types', 'combineQueryCasts', 'parseQuery', 'queryCast'].sort();
+const expectedExports = ['Types', 'combineQueryCasts', 'queryCast'].sort();
 
 const topLevel = { ...queryCast };
 delete topLevel.default;

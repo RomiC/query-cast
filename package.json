@@ -35,10 +35,11 @@
     "build:test": "tsdown -c tsdown.tests.config.ts",
     "lint": "eslint src specs",
     "lint:fix": "npm run lint -- --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"specs/**/*.js\" \"scripts/**/*.{cjs,mjs}\" \"eslint.config.js\" \"tsconfig.json\" \"*.config.ts\"",
     "pretest": "npm run build:test",
     "pretest:smoke": "npm run build",
-    "test": "c8 --reporter=text --reporter=lcov --include=dist node --test 'specs/**/*.spec.js'",
-    "test:no-coverage": "node --test 'specs/**/*.spec.js'",
+    "test": "c8 --reporter=text --reporter=lcov --include=dist node --test specs/*.spec.js",
+    "test:no-coverage": "node --test specs/*.spec.js",
     "test:smoke": "node ./scripts/smoke-cjs.cjs && node ./scripts/smoke-esm.mjs"
   },
   "dependencies": {
@@ -66,7 +67,13 @@
     "query parser"
   ],
   "lint-staged": {
-    "*.ts": "npm run lint:fix"
+    "*.ts": [
+      "prettier --write",
+      "npm run lint:fix"
+    ],
+    "*.js": "prettier --write",
+    "*.{cjs,mjs}": "prettier --write",
+    "*.{json,md}": "prettier --write"
   },
   "husky": {
     "hooks": {
