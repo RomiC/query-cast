@@ -101,10 +101,7 @@ describe('queryCast', () => {
 
     const castMulti = queryCast({ foo: Types.ANY, baz: Types.ANY });
     assert.deepEqual(castMulti('?foo.bar&foo.baz=val'), { foo: { bar: '', baz: 'val' } });
-    assert.deepEqual(
-      castMulti('?foo.bar.baz&foo.bar.zab=val'),
-      { foo: { bar: { baz: '', zab: 'val' } } }
-    );
+    assert.deepEqual(castMulti('?foo.bar.baz&foo.bar.zab=val'), { foo: { bar: { baz: '', zab: 'val' } } });
   });
 
   it('handles empty values', () => {
@@ -117,10 +114,7 @@ describe('queryCast', () => {
 
   it('handles encoded values', () => {
     const cast = queryCast({ foo: Types.STRING, bar: Types.STRING });
-    assert.deepEqual(
-      cast('?foo=%D0%B1%D0%B0%D1%80&bar=%D0%B1%D0%B0%D0%B7'),
-      { foo: 'бар', bar: 'баз' }
-    );
+    assert.deepEqual(cast('?foo=%D0%B1%D0%B0%D1%80&bar=%D0%B1%D0%B0%D0%B7'), { foo: 'бар', bar: 'баз' });
   });
 
   it('handles strings without query string', () => {
@@ -186,20 +180,17 @@ describe('combineQueryCasts', () => {
       cast2
     });
 
-    assert.deepEqual(
-      combinedCast('?foo=12.15&bar=false&baz=baaaz&fooFoo=98.76&barBar=true&bazBaz=zaaab'),
-      {
-        cast1: {
-          foo: 12.15,
-          bar: false,
-          baz: 'baaaz'
-        },
-        cast2: {
-          fooFoo: 98.76,
-          barBar: true,
-          bazBaz: 'zaaab'
-        }
+    assert.deepEqual(combinedCast('?foo=12.15&bar=false&baz=baaaz&fooFoo=98.76&barBar=true&bazBaz=zaaab'), {
+      cast1: {
+        foo: 12.15,
+        bar: false,
+        baz: 'baaaz'
+      },
+      cast2: {
+        fooFoo: 98.76,
+        barBar: true,
+        bazBaz: 'zaaab'
       }
-    );
+    });
   });
 });

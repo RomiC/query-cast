@@ -66,14 +66,17 @@ export function queryCast<S extends CastSchema>(schema: S): QueryCast<S> {
   return (query: string | ParsedQuery) => {
     const parsed = typeof query === 'string' ? parseQuery(query) : query;
 
-    return schemaKeys.reduce((result, key) => {
-      const value = parsed[key];
-      if (value != null) {
-        result[key as keyof S] = cast(value, schema[key]);
-      }
+    return schemaKeys.reduce(
+      (result, key) => {
+        const value = parsed[key];
+        if (value != null) {
+          result[key as keyof S] = cast(value, schema[key]);
+        }
 
-      return result;
-    }, Object.create(null) as ParsedCastQuery<S>);
+        return result;
+      },
+      Object.create(null) as ParsedCastQuery<S>
+    );
   };
 }
 
@@ -82,10 +85,13 @@ export function combineQueryCasts<T extends QueryCastMap<any>>(casts: T): (query
   const castsKeys = Object.keys(casts);
 
   return (query: string) => {
-    return castsKeys.reduce((result, key) => {
-      result[key as keyof T] = casts[key as keyof T](query) as InferQueryCastType<T>[keyof T];
+    return castsKeys.reduce(
+      (result, key) => {
+        result[key as keyof T] = casts[key as keyof T](query) as InferQueryCastType<T>[keyof T];
 
-      return result;
-    }, Object.create(null) as InferQueryCastType<T>);
+        return result;
+      },
+      Object.create(null) as InferQueryCastType<T>
+    );
   };
 }
