@@ -22,7 +22,22 @@ type TypesMap = {
   [Types.STRING]: string;
 };
 
-type InferType<T> = T extends Types ? TypesMap[T] : T extends Types[] ? TypesMap[T[0]][] : never;
+interface CastFieldSchema {
+  type: Types | [Types];
+  default?: unknown;
+}
+
+type CastSchemaEntry = Types | [Types] | CastFieldSchema;
+
+type SchemaType<T> = T extends CastFieldSchema ? T['type'] : T;
+
+type InferType<T> = SchemaType<T> extends Types
+  ? TypesMap[SchemaType<T>]
+  : SchemaType<T> extends [infer E]
+    ? E extends Types
+      ? TypesMap[E][]
+      : never
+    : never;
 
 type ParsedCastQuery<S extends CastSchema> = {
   [K in keyof S]: InferType<S[K]>;
@@ -32,7 +47,7 @@ type ParsedCastQuery<S extends CastSchema> = {
  * Describe the schema of query parsing
  */
 interface CastSchema {
-  [key: string]: Types | [Types];
+  [key: string]: CastSchemaEntry;
 }
 
 /**
@@ -60,17 +75,36 @@ type QueryCastMap<S extends CastSchemaMap> = {
 
 type InferQueryCastType<T> = T extends QueryCastMap<infer S> ? { [K in keyof S]: ParsedCastQuery<S[K]> } : never;
 
+type ProcessedSchema = Record<string, { type: Types | [Types]; default?: unknown }>;
+
 export function queryCast<S extends CastSchema>(schema: S): QueryCast<S> {
   const schemaKeys = Object.keys(schema);
+
+  const processedSchema: ProcessedSchema = schemaKeys.reduce(
+    (acc, key) => {
+      const entry = schema[key];
+      if (typeof entry === 'object' && !Array.isArray(entry) && entry !== null) {
+        acc[key] = { type: entry.type, default: entry.default };
+      } else {
+        acc[key] = { type: entry, default: undefined };
+      }
+      return acc;
+    },
+    Object.create(null) as ProcessedSchema
+  );
 
   return (query: string | ParsedQuery) => {
     const parsed = typeof query === 'string' ? parseQuery(query) : query;
 
     return schemaKeys.reduce(
       (result, key) => {
+        const { type, default: defaultValue } = processedSchema[key];
         const value = parsed[key];
+
         if (value != null) {
-          result[key as keyof S] = cast(value, schema[key]);
+          result[key as keyof S] = cast(value, type);
+        } else if (defaultValue !== undefined) {
+          result[key as keyof S] = defaultValue as InferType<S[keyof S]>;
         }
 
         return result;

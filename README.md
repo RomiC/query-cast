@@ -48,7 +48,7 @@ You may think of it as a reducers from [`redux`](https://github.com/reduxjs/redu
 
 Create cast function based upon schema.
 
-- `schema: {[key: string]: Types | [Types]}` – describe the shape of the output. You should use the types from `Types`-enum from the lib while defining it. List of supported types below:
+- `schema: {[key: string]: Types | [Types] | { type: Types | [Types], default?: any }}` – describe the shape of the output. You should use the types from `Types`-enum from the lib while defining it. List of supported types below:
 
   - `Types.STRING` – string value will left as is
   - `Types.BOOLEAN` – convert to boolean. Any number which is greater than 0, `Infinity`, `'1'`, `'yes'`, `'+'` will be cast to `true`.
@@ -57,6 +57,28 @@ Create cast function based upon schema.
   - `Types.NUMBER` – alias of `Types.FLOAT`
   - `Types.DATE` – convert to `Date`-object
   - `Types.ANY` – the same as `Types.STRING`
+
+  You can also specify a default value for a param by passing an object with `type` and optional `default`:
+
+  ```ts
+  const cast = queryCast({
+    page: {
+      type: Types.INTEGER,
+      default: 1
+    },
+    search: {
+      type: Types.STRING,
+      default: ''
+    },
+    // Simple syntax still works
+    filter: Types.STRING
+  });
+
+  cast('?page=2');            // { page: 2, search: '', filter: undefined }
+  cast('');                   // { page: 1, search: '', filter: undefined }
+  ```
+
+  When a param is missing from the query and a `default` is specified, the default value is used. If no default is specified, the param is omitted from the result. Provided query values always override the default.
 
 ### `combineQueryCasts(casts)`
 

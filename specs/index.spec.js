@@ -164,6 +164,84 @@ describe('queryCast', () => {
     assert.deepEqual(cast('&a'), { a: '' });
   });
 
+  it('should apply default value when param is missing', () => {
+    const castWithDefaults = queryCast({
+      foo: {
+        type: Types.INTEGER,
+        default: 20
+      },
+      bar: {
+        type: Types.STRING,
+        default: 'fallback'
+      },
+      baz: {
+        type: Types.BOOLEAN,
+        default: true
+      }
+    });
+
+    assert.deepEqual(castWithDefaults(''), {
+      foo: 20,
+      bar: 'fallback',
+      baz: true
+    });
+  });
+
+  it('should use provided param value over default', () => {
+    const castWithDefaults = queryCast({
+      foo: {
+        type: Types.INTEGER,
+        default: 20
+      },
+      bar: {
+        type: Types.STRING,
+        default: 'fallback'
+      }
+    });
+
+    assert.deepEqual(castWithDefaults('?foo=42&bar=override'), {
+      foo: 42,
+      bar: 'override'
+    });
+  });
+
+  it('should mix default and non-default params', () => {
+    const castMixed = queryCast({
+      foo: {
+        type: Types.STRING,
+        default: 'a'
+      },
+      bar: Types.STRING
+    });
+
+    assert.deepEqual(castMixed('?bar=present'), {
+      foo: 'a',
+      bar: 'present'
+    });
+  });
+
+  it('should support default with object notation alongside simple syntax', () => {
+    const castSimple = queryCast({
+      foo: Types.INTEGER
+    });
+
+    assert.deepEqual(castSimple('?foo=42'), { foo: 42 });
+    assert.deepEqual(castSimple(''), {});
+  });
+
+  it('handles default with empty string as value', () => {
+    const cast = queryCast({
+      foo: {
+        type: Types.STRING,
+        default: 'default'
+      }
+    });
+
+    assert.deepEqual(cast('?foo='), { foo: '' });
+    assert.deepEqual(cast('?foo&'), { foo: '' });
+    assert.deepEqual(cast(''), { foo: 'default' });
+  });
+
   it('skips params with empty keys', () => {
     const cast = queryCast({ a: Types.STRING, d: Types.STRING, c: Types.STRING });
     assert.deepEqual(cast('a=b&=c&d=e'), { a: 'b', d: 'e' });
