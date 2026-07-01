@@ -1,4 +1,4 @@
-# query-cast ![Tests](https://github.com/RomiC/query-cast/workflows/Tests/badge.svg) [![Coverage Status](https://coveralls.io/repos/github/RomiC/query-cast/badge.svg)](https://coveralls.io/github/RomiC/query-cast)
+# query-cast ![Tests](https://github.com/RomiC/query-cast/workflows/Tests/badge.svg) [![Coverage Status](https://coveralls.io/repos/github/RomiC/query-cast/badge.svg?branch=main)](https://coveralls.io/github/RomiC/query-cast?branch=main)
 
 Is a small utility which helps you parse and cast the query (or search) params of the url:
 
