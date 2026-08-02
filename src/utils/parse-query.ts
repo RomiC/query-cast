@@ -87,7 +87,7 @@ function appendParamValue(root: QueryParams, name: string, value: string, index 
 }
 
 class Scanner {
-  public char: string = null;
+  public char: string | null = null;
   public code = -1;
   /**
    * Index varies from -1 to _input.length

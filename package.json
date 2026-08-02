@@ -47,6 +47,7 @@
     "test": "c8 --reporter=text --reporter=lcov --include=dist node --test specs/*.spec.js",
     "test:no-coverage": "node --test specs/*.spec.js",
     "test:smoke": "node ./scripts/smoke-cjs.cjs && node ./scripts/smoke-esm.mjs",
+    "typecheck": "tsc --noEmit",
     "prepare": "husky"
   },
   "dependencies": {
@@ -54,13 +55,14 @@
   },
   "devDependencies": {
     "@types/node": "^26.1.2",
+    "@typescript/native": "npm:typescript@^7.0.2",
     "c8": "^12.0.0",
     "husky": "9.1.7",
     "lint-staged": "17.2.0",
     "oxfmt": "^0.61.0",
     "oxlint": "^1.76.0",
     "tsdown": "^0.22.2",
-    "typescript": "6.0.3"
+    "typescript": "npm:@typescript/typescript6@^6.0.2"
   },
   "overrides": {
     "yargs": "^18.0.0"
