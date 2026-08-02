@@ -12,7 +12,7 @@ export enum Types {
 }
 
 type TypesMap = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   [Types.ANY]: any;
   [Types.BOOLEAN]: boolean;
   [Types.DATE]: Date;
@@ -31,13 +31,14 @@ type CastSchemaEntry = Types | [Types] | CastFieldSchema;
 
 type SchemaType<T> = T extends CastFieldSchema ? T['type'] : T;
 
-type InferType<T> = SchemaType<T> extends Types
-  ? TypesMap[SchemaType<T>]
-  : SchemaType<T> extends [infer E]
-    ? E extends Types
-      ? TypesMap[E][]
-      : never
-    : never;
+type InferType<T> =
+  SchemaType<T> extends Types
+    ? TypesMap[SchemaType<T>]
+    : SchemaType<T> extends [infer E]
+      ? E extends Types
+        ? TypesMap[E][]
+        : never
+      : never;
 
 type ParsedCastQuery<S extends CastSchema> = {
   [K in keyof S]: InferType<S[K]>;

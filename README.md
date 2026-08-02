@@ -42,7 +42,7 @@ You may think of it as a reducers from [`redux`](https://github.com/reduxjs/redu
 
 ## API
 
-`query-cast` is  based on [`typeable.js`](https://github.com/xpepermint/typeablejs). So, schema definition is the same as for typeable library.
+`query-cast` is based on [`typeable.js`](https://github.com/xpepermint/typeablejs). So, schema definition is the same as for typeable library.
 
 ### `queryCast(schema)`
 
@@ -74,8 +74,8 @@ Create cast function based upon schema.
     filter: Types.STRING
   });
 
-  cast('?page=2');            // { page: 2, search: '', filter: undefined }
-  cast('');                   // { page: 1, search: '', filter: undefined }
+  cast('?page=2'); // { page: 2, search: '', filter: undefined }
+  cast(''); // { page: 1, search: '', filter: undefined }
   ```
 
   When a param is missing from the query and a `default` is specified, the default value is used. If no default is specified, the param is omitted from the result. Provided query values always override the default.
