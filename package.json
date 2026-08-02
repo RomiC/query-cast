@@ -2,17 +2,27 @@
   "name": "query-cast",
   "version": "2.1.1",
   "description": "Query params parser and cast micro-library",
-  "type": "module",
+  "keywords": [
+    "query",
+    "query parameters",
+    "query parser",
+    "querystring",
+    "searchparams",
+    "url parser"
+  ],
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git@github.com:RomiC/query-cast.git"
   },
-  "engines": {
-    "node": ">=22"
-  },
-  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": {
@@ -25,63 +35,41 @@
       }
     }
   },
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "sideEffects": false,
   "scripts": {
     "build": "tsdown",
     "build:test": "tsdown -c tsdown.tests.config.ts",
-    "lint": "eslint src specs",
-    "lint:fix": "npm run lint -- --fix",
-    "format": "prettier --write \"src/**/*.ts\" \"specs/**/*.js\" \"scripts/**/*.{cjs,mjs}\" \"eslint.config.js\" \"tsconfig.json\" \"*.config.ts\"",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "pretest": "npm run build:test",
     "pretest:smoke": "npm run build",
     "test": "c8 --reporter=text --reporter=lcov --include=dist node --test specs/*.spec.js",
     "test:no-coverage": "node --test specs/*.spec.js",
-    "test:smoke": "node ./scripts/smoke-cjs.cjs && node ./scripts/smoke-esm.mjs"
+    "test:smoke": "node ./scripts/smoke-cjs.cjs && node ./scripts/smoke-esm.mjs",
+    "prepare": "husky"
   },
   "dependencies": {
     "typeable": "2.4.1"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
     "@types/node": "^26.1.2",
     "c8": "^11.0.0",
-    "eslint": "^10.6.0",
-    "eslint-config-prettier": "^10.1.8",
     "husky": "9.1.7",
     "lint-staged": "17.0.8",
-    "prettier": "^3.9.1",
+    "oxfmt": "^0.61.0",
+    "oxlint": "^1.76.0",
     "tsdown": "^0.22.2",
-    "typescript": "6.0.3",
-    "typescript-eslint": "^8.62.0"
-  },
-  "keywords": [
-    "query",
-    "querystring",
-    "searchparams",
-    "query parameters",
-    "url parser",
-    "query parser"
-  ],
-  "lint-staged": {
-    "*.ts": [
-      "prettier --write",
-      "npm run lint:fix"
-    ],
-    "*.js": "prettier --write",
-    "*.{cjs,mjs}": "prettier --write",
-    "*.{json,md}": "prettier --write"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "npm test"
-    }
+    "typescript": "6.0.3"
   },
   "overrides": {
     "yargs": "^18.0.0"
+  },
+  "lint-staged": {
+    "*.{js,ts,mjs,cjs}": "oxlint --fix",
+    "*.{js,ts,mjs,cjs,json,md,yml,yaml}": "oxfmt"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }

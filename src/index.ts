@@ -12,7 +12,7 @@ export enum Types {
 }
 
 type TypesMap = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   [Types.ANY]: any;
   [Types.BOOLEAN]: boolean;
   [Types.DATE]: Date;
@@ -31,13 +31,14 @@ type CastSchemaEntry = Types | [Types] | CastFieldSchema;
 
 type SchemaType<T> = T extends CastFieldSchema ? T['type'] : T;
 
-type InferType<T> = SchemaType<T> extends Types
-  ? TypesMap[SchemaType<T>]
-  : SchemaType<T> extends [infer E]
-    ? E extends Types
-      ? TypesMap[E][]
-      : never
-    : never;
+type InferType<T> =
+  SchemaType<T> extends Types
+    ? TypesMap[SchemaType<T>]
+    : SchemaType<T> extends [infer E]
+      ? E extends Types
+        ? TypesMap[E][]
+        : never
+      : never;
 
 type ParsedCastQuery<S extends CastSchema> = {
   [K in keyof S]: InferType<S[K]>;
@@ -51,13 +52,6 @@ interface CastSchema {
 }
 
 /**
- * Define combination of two or more schemas
- */
-type CastSchemaMap = {
-  [K: string]: CastSchema;
-};
-
-/**
  * Result of parsing
  */
 interface ParsedQuery<T = string> {
@@ -69,11 +63,9 @@ interface ParsedQuery<T = string> {
  */
 type QueryCast<S extends CastSchema> = (query: string | ParsedQuery) => ParsedCastQuery<S>;
 
-type QueryCastMap<S extends CastSchemaMap> = {
-  [K in keyof S]: QueryCast<S[K]>;
-};
+type AnyQueryCastMap = Record<string, (query: string | ParsedQuery) => Record<string, unknown>>;
 
-type InferQueryCastType<T> = T extends QueryCastMap<infer S> ? { [K in keyof S]: ParsedCastQuery<S[K]> } : never;
+type InferQueryCastType<T extends AnyQueryCastMap> = { [K in keyof T]: ReturnType<T[K]> };
 
 type ProcessedSchema = Record<string, { type: Types | [Types]; default?: unknown }>;
 
@@ -114,8 +106,7 @@ export function queryCast<S extends CastSchema>(schema: S): QueryCast<S> {
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function combineQueryCasts<T extends QueryCastMap<any>>(casts: T): (query: string) => InferQueryCastType<T> {
+export function combineQueryCasts<T extends AnyQueryCastMap>(casts: T): (query: string) => InferQueryCastType<T> {
   const castsKeys = Object.keys(casts);
 
   return (query: string) => {
