@@ -29,6 +29,8 @@ jobs:
         run: npm run lint
       - name: Checking formatting
         run: npm run format:check
+      - name: Typechecking
+        run: npm run typecheck
       - name: Testing
         run: npm test
       - name: Calculating coverage
